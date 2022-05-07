@@ -1,8 +1,17 @@
-from datetime import datetime, timedelta
+from json import load, dump
+from datetime import datetime
 from meetings.Meeting import Meeting
 from meetings.Calendar import Calendar
 
 calendar = Calendar()
+
+with open('meetings.json') as file:
+    data = load(file)
+    for item in data:
+        meeting = Meeting()
+        meeting.title = item['title']
+        meeting.date = datetime.strptime(item['date'], '%d.%m.%Y %H:%M')
+        calendar.add_meeting(meeting)
 
 if __name__ == '__main__':
     while True:
@@ -17,6 +26,11 @@ if __name__ == '__main__':
             meeting_date = datetime.strptime(date, '%d.%m.%Y %H:%M')
 
             calendar.add_meeting(Meeting(meeting_date, title))
+
+            with open('meeting.json', 'w') as file:
+                data = []
+                for meeting in calendar.meetings:
+
 
         elif option == 'q':
             break
