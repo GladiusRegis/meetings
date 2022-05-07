@@ -5,12 +5,15 @@ from meetings.Calendar import Calendar
 
 calendar = Calendar()
 
+# TODO: add exceptions when opening the main file - when there is no json file
+
+
 with open('meetings.json') as file:
     data = load(file)
     for item in data:
-        meeting = Meeting()
-        meeting.title = item['title']
-        meeting.date = datetime.strptime(item['date'], '%d.%m.%Y %H:%M')
+        meeting = Meeting(
+            datetime.strptime(item['date'], '%d.%m.%Y %H:%M'),
+            item['title'])
         calendar.add_meeting(meeting)
 
 if __name__ == '__main__':
@@ -27,10 +30,14 @@ if __name__ == '__main__':
 
             calendar.add_meeting(Meeting(meeting_date, title))
 
-            with open('meeting.json', 'w') as file:
+            with open('meetings.json', 'w') as file:
                 data = []
-                for meeting in calendar.meetings:
-
+                for meeting in calendar.meetings.values():
+                    data.append({
+                        'title': meeting.title,
+                        'date': meeting.date.strftime( '%d.%m.%Y %H:%M')
+                    })
+                dump(data, file)
 
         elif option == 'q':
             break
